@@ -13,9 +13,11 @@ class Menu extends Phaser.Scene {
       this.load.image('jogar', 'media/sprites/Menu/000_menu_jogar.png');
       this.load.image('aspas', 'media/sprites/Menu/000_menu_aspas.png');
       this.load.spritesheet('jimmy', 'media/sprites/Menu/000_menu_jimmy.png',{
-        frameWidth: 177,
-        frameHeight: 233
+        frameWidth: 26,
+        frameHeight: 30
       });
+      //Carrega trilha
+      this.load.audio('trilha', 'media/audio/musica_inicio.mp3');
   }
 
   create() {
@@ -30,6 +32,10 @@ class Menu extends Phaser.Scene {
       repeat: -1
     });
     jimmyFall.play('jimmyFalling');
+
+    this.sound.play('trilha', {
+      loop: true
+    })
   }
 
   update() {

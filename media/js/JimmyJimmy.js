@@ -15,10 +15,37 @@ class JimmyJimmy extends Phaser.Scene {
     this.load.image('chao3', 'media/sprites/floor/003_RedDead_floor.jpg');
     this.load.image('chao4', 'media/sprites/floor/004_IT_floor.png');
     //Carrega Personagem
-    this.load.image('jimmy1', 'media/sprites/character/001_MonsterNess_ness.png');
-    this.load.image('jimmy2', 'media/sprites/character/002_Jeizu.png');
-    this.load.image('jimmy3', 'media/sprites/character/003_Jimmy.png');
-    this.load.image('jimmy4', 'media/sprites/character/004_Pennywise.png');
+    //Jimmy
+    this.load.image('jimmy1', 'media/sprites/character/001_jimmy_frame_1.png');
+    this.load.image('jimmy1', 'media/sprites/character/001_jimmy_frame_2.png');
+    this.load.image('jimmy1', 'media/sprites/character/001_jimmy_frame_3.png');
+    this.load.image('jimmy1', 'media/sprites/character/001_jimmy_frame_4.png');
+    //Jason
+    this.load.image('jimmy2', 'media/sprites/character/002_jason_frame_1.png');
+    this.load.image('jimmy2', 'media/sprites/character/002_jason_frame_2.png');
+    this.load.image('jimmy2', 'media/sprites/character/002_jason_frame_3.png');
+    this.load.image('jimmy2', 'media/sprites/character/002_jason_frame_4.png');
+    //Indiana Jones
+    this.load.image('jimmy3', 'media/sprites/character/003_indianajones_frame_1.png');
+    this.load.image('jimmy3', 'media/sprites/character/003_indianajones_frame_2.png');
+    this.load.image('jimmy3', 'media/sprites/character/003_indianajones_frame_3.png');
+    this.load.image('jimmy3', 'media/sprites/character/003_indianajones_frame_4.png');
+    //It
+    this.load.image('jimmy4', 'media/sprites/character/004_it_frame_1.png');
+    this.load.image('jimmy4', 'media/sprites/character/004_it_frame_2.png');
+    this.load.image('jimmy4', 'media/sprites/character/004_it_frame_3.png');
+    this.load.image('jimmy4', 'media/sprites/character/004_it_frame_4.png');
+    //Darth Vader
+    this.load.image('jimmy5', 'media/sprites/character/005_darthvader_frame_1.png');
+    this.load.image('jimmy5', 'media/sprites/character/005_darthvader_frame_2.png');
+    this.load.image('jimmy5', 'media/sprites/character/005_darthvader_frame_3.png');
+    this.load.image('jimmy5', 'media/sprites/character/005_darthvader_frame_4.png');
+    //Red Dead
+    this.load.image('jimmy6', 'media/sprites/character/006_reddead_frame_1.png');
+    this.load.image('jimmy6', 'media/sprites/character/006_reddead_frame_2.png');
+    this.load.image('jimmy6', 'media/sprites/character/006_reddead_frame_3.png');
+    this.load.image('jimmy6', 'media/sprites/character/006_reddead_frame_4.png');
+    //
     //Carrega Item
     this.load.image('item1', 'media/sprites/item/001_MonsterNess_Item.png');
     this.load.image('item2', 'media/sprites/item/002_Friday13_Item.png');
@@ -47,7 +74,7 @@ class JimmyJimmy extends Phaser.Scene {
 
     //Adiciona jogador
     jimmyJimmy = this.physics.add.sprite(100, 150, 'jimmy1');
-    jimmyJimmy.setScale(0.5);
+    jimmyJimmy.setScale(1);
 
     jimmyJimmy.setBounce(0);
     jimmyJimmy.setCollideWorldBounds(true);
@@ -60,7 +87,9 @@ class JimmyJimmy extends Phaser.Scene {
     somDePulo = this.sound.add('sompulo');
     somDoItem = this.sound.add('somitem');
     musica1 = this.sound.add('musica1');
-    musica1.play();
+    musica1.play({
+      loop: true
+    });
     musica2 = this.sound.add('musica2');
     musica3 = this.sound.add('musica3');
     musica4 = this.sound.add('musica4');
@@ -130,7 +159,9 @@ class JimmyJimmy extends Phaser.Scene {
         musica1.stop();
       }
       if(!musica2.isPlaying) {
-        musica2.play();
+        musica2.play({
+          loop: true
+        });
       }
       if (score >= 10) {
         fundo.setTexture('fundo3');
@@ -141,7 +172,9 @@ class JimmyJimmy extends Phaser.Scene {
           musica2.stop();
         }
         if(!musica3.isPlaying) {
-          musica3.play();
+          musica3.play({
+            loop: true
+          });
         }
         if (score >= 15) {
           fundo.setTexture('fundo4');
@@ -152,7 +185,9 @@ class JimmyJimmy extends Phaser.Scene {
             musica3.stop();
           }
           if(!musica4.isPlaying) {
-            musica4.play();
+            musica4.play({
+              loop: true
+            });
           }
         }
       }
