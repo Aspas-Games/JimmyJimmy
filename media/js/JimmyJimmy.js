@@ -3,19 +3,23 @@ var chao;
 var itemTocandoChao;
 var colisao;
 var timer;
-var defaultDefeatTime = 13;
-var defeatTime = defaultDefeatTime;
+var initialDefeatTime = 10;
+var maxDefeatTime = initialDefeatTime;
+var defeatTime = maxDefeatTime;
 var gameOverScreen;
 var gameOverContinue;
 var gameOverExit;
+var finalScore;
 var backgroundIt;
 var backgroundRedDead;
 var rightSprite;
 var rightJumpSprite;
 var leftSprite;
 var leftJumpSprite;
+var direction = 0;
 var playerSpeed = 150;
 var itemHeight = 0;
+var keys;
 
 class JimmyJimmy extends Phaser.Scene {
   constructor() {
@@ -86,12 +90,12 @@ class JimmyJimmy extends Phaser.Scene {
     this.load.audio('sompulo', 'media/audio/som_pulo.mp3');
     this.load.audio('somitem', 'media/audio/som_item.mp3');
     //Carrega Músicas
-    // this.load.audio('musica1', 'media/audio/musica_jimmy.mp3');
-    // this.load.audio('musica2', 'media/audio/musica_jason.mp3');
-    // this.load.audio('musica3', 'media/audio/musica_indiana.mp3');
-    // this.load.audio('musica4', 'media/audio/musica_it.mp3');
-    // this.load.audio('musica5', 'media/audio/musica_starwars.mp3');
-    // this.load.audio('musica6', 'media/audio/musica_reddead.mp3');
+    this.load.audio('musica1', 'media/audio/musica_jimmy.mp3');
+    this.load.audio('musica2', 'media/audio/musica_jason.mp3');
+    this.load.audio('musica3', 'media/audio/musica_indiana.mp3');
+    this.load.audio('musica4', 'media/audio/musica_it.mp3');
+    this.load.audio('musica5', 'media/audio/musica_starwars.mp3');
+    this.load.audio('musica6', 'media/audio/musica_reddead.mp3');
     //Carrega sprites do Game Over
     this.load.image('gameover', 'media/sprites/background/007_GameOver_background.jpg');
     this.load.image('continue', 'media/sprites/menu/001_gameover_continuar.png');
@@ -151,13 +155,15 @@ class JimmyJimmy extends Phaser.Scene {
     //Adiciona sons
     somDePulo = this.sound.add('sompulo');
     somDoItem = this.sound.add('somitem');
-    // musica1 = this.sound.add('musica1');
-    // musica1.play({
-    //   loop: true
-    // });
-    // musica2 = this.sound.add('musica2');
-    // musica3 = this.sound.add('musica3');
-    // musica4 = this.sound.add('musica4');
+    musica1 = this.sound.add('musica1');
+    musica1.play({
+      loop: true
+    });
+    musica2 = this.sound.add('musica2');
+    musica3 = this.sound.add('musica3');
+    musica4 = this.sound.add('musica4');
+    musica5 = this.sound.add('musica5');
+    musica6 = this.sound.add('musica6');
 
     //Adiciona eventos de teclado
     move = this.input.keyboard.createCursorKeys();
@@ -171,12 +177,22 @@ class JimmyJimmy extends Phaser.Scene {
     colisao = this.physics.add.overlap(jimmyJimmy, items, coletaItem, null, this);
 
     //Adiciona Pontuação
-    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '24px', fill: '#FFF' });
+    scoreText = this.add.text(16, 16, 'Score: 0', {
+      fontFamily: 'Roboto Condensed',
+      fontSize: '24px',
+      fill: '#FFF',
+      backgroundColor: 'rgba(0, 0, 0, .35)'
+    });
 
     //Adiciona Temporizador
-    textoTimer = this.add.text(16, 36, 'Derrota em: ', { fontSize: '24px', fill: '#FFF' });
+    textoTimer = this.add.text(16, 36, 'Derrota em: ', {
+      fontFamily: 'Roboto Condensed',
+      fontSize: '24px',
+      fill: '#FFF',
+      backgroundColor: 'rgba(0, 0, 0, .35)'
+    });
     timer = this.time.addEvent({
-      delay: 1000,
+      delay: 500,
       callback: onTick,
       callbackScope: this,
       loop: true
@@ -196,22 +212,101 @@ class JimmyJimmy extends Phaser.Scene {
       reset();
       this.scene.start('playGame');
     })
+    finalScore = this.add.text(255, 200, 'Score: ', {
+      fontFamily: 'Roboto Condensed',
+      fontSize: '30px',
+      fill: '#FFF'
+    });
+    finalScore.setVisible(false);
+
+    //Armazena keys em array
+    keys = {
+      //Cenário 2
+      bGround2: 'fundo2',
+      ground2: 'chao2',
+      icon2: 'item2',
+      rSprite2: 'jason1',
+      rJSprite2: 'jason2',
+      lSprite2: 'jason3',
+      lJSprite2: 'jason4',
+      pSpeed2: 200,
+      iHeight2: 100,
+      mDTime2: 8,
+      //Cenário 3
+      bGround3: 'fundo3',
+      ground3: 'chao3',
+      icon3: 'item3',
+      rSprite3: 'indi1',
+      rJSprite3: 'indi2',
+      lSprite3: 'indi3',
+      lJSprite3: 'indi4',
+      pSpeed3: 250,
+      iHeight3: 150,
+      mDTime3: 6,
+      //Cenário 4
+      bGround4: '',
+      ground4: 'chao4',
+      icon4: 'item4',
+      rSprite4: 'it1',
+      rJSprite4: 'it2',
+      lSprite4: 'it3',
+      lJSprite4: 'it4',
+      pSpeed4: 300,
+      iHeight4: 200,
+      mDTime4: 4,
+      //Cenário 5
+      bGround5: 'fundo5',
+      ground5: 'chao5',
+      icon5: 'item5',
+      rSprite5: 'darth1',
+      rJSprite5: 'darth2',
+      lSprite5: 'darth3',
+      lJSprite5: 'darth4',
+      pSpeed5: 350,
+      iHeight5: 250,
+      mDTime5: 3,
+      //Cenário 6
+      bGround6: '',
+      ground6: 'chao6',
+      icon6: 'item6',
+      rSprite6: 'red1',
+      rJSprite6: 'red2',
+      lSprite6: 'red3',
+      lJSprite6: 'red4',
+      pSpeed6: 450,
+      iHeight6: 300,
+      mDTime6: 2.5
+    };
   }
 
   update () {
     //Movimenta personagem
     if (move.left.isDown) {
       jimmyJimmy.setVelocityX(-playerSpeed);
-      jimmyJimmy.setTexture(leftJumpSprite);
+      direction = 1;
     } else if (move.right.isDown) {
       jimmyJimmy.setVelocityX(playerSpeed);
-      jimmyJimmy.setTexture(rightJumpSprite);
+      direction = 0;
     }
 
     //Pulo do Personagem
     if (jimmyJimmy.body.touching.down) {
       jimmyJimmy.setVelocityY(-500);
       somDePulo.play();
+    }
+
+    //Animação do Personagem
+    if (jimmyJimmy.y >= 261 && direction == 1) {
+      jimmyJimmy.setTexture(leftSprite);
+    }
+    if (jimmyJimmy.y >= 261 && direction == 0) {
+      jimmyJimmy.setTexture(rightSprite);
+    }
+    if (jimmyJimmy.y <= 260 && direction == 1) {
+      jimmyJimmy.setTexture(leftJumpSprite);
+    }
+    if (jimmyJimmy.y <= 260 && direction == 0) {
+      jimmyJimmy.setTexture(rightJumpSprite);
     }
 
     //Sprites do personagem
@@ -227,95 +322,62 @@ class JimmyJimmy extends Phaser.Scene {
 
     //Muda filme
     if (score == 5) {
-      fundo.setTexture('fundo2');
-      flr.setTexture('chao2');
-      items.setTexture('item2');
-      rightJumpSprite = 'jason2';
-      leftJumpSprite = 'jason4';
-      playerSpeed = 200;
-      itemHeight = 100;
-      defaultDefeatTime = 10;
-      // if(musica1.isPlaying) {
-        // musica1.stop();
-      // }
-      // if(!musica2.isPlaying) {
-        // musica2.play({
-          // loop: true
-        // });
-      // }
+      changeScenary (keys.bGround2, keys.ground2, keys.icon2, keys.rSprite2, keys.rJSprite2, keys.lSprite2, keys.lJSprite2, keys.pSpeed2, keys.iHeight2, keys.mDTime2);
+      if(musica1.isPlaying) {
+        musica1.stop();
+      }
+      if(!musica2.isPlaying) {
+        musica2.play({
+          loop: true
+        });
+      }
     }
     if (score == 10) {
-      fundo.setTexture('fundo3');
-      flr.setTexture('chao3');
-      items.setTexture('item3');
-      rightJumpSprite = 'indi2';
-      leftJumpSprite = 'indi4';
-      playerSpeed = 250;
-      itemHeight = 150;
-      defaultDefeatTime = 8;
-      // if(musica2.isPlaying) {
-        // musica2.stop();
-      // }
-      // if(!musica3.isPlaying) {
-        // musica3.play({
-          // loop: true
-        // });
-      // }
+      changeScenary (keys.bGround3, keys.ground3, keys.icon3, keys.rSprite3, keys.rJSprite3, keys.lSprite3, keys.lJSprite3, keys.pSpeed3, keys.iHeight3, keys.mDTime3);
+      if(musica2.isPlaying) {
+        musica2.stop();
+      }
+      if(!musica3.isPlaying) {
+        musica3.play({
+          loop: true
+        });
+      }
     }
     if (score == 15) {
       backgroundIt.setVisible(true);
-      flr.setTexture('chao4');
-      items.setTexture('item4');
-      rightJumpSprite = 'it2';
-      leftJumpSprite = 'it4';
-      playerSpeed = 300;
-      itemHeight = 200;
-      defaultDefeatTime = 6;
-      // if(musica3.isPlaying) {
-        // musica3.stop();
-      // }
-      // if(!musica4.isPlaying) {
-        // musica4.play({
-      //     loop: true
-      //   });
-      // }
+      changeScenary (keys.bGround4, keys.ground4, keys.icon4, keys.rSprite4, keys.rJSprite4, keys.lSprite4, keys.lJSprite4, keys.pSpeed4, keys.iHeight4, keys.mDTime4);
+      if(musica3.isPlaying) {
+        musica3.stop();
+      }
+      if(!musica4.isPlaying) {
+        musica4.play({
+          loop: true
+        });
+      }
     }
     if (score == 20) {
       backgroundIt.setVisible(false);
-      fundo.setTexture('fundo5');
-      flr.setTexture('chao5');
-      items.setTexture('item5');
-      rightJumpSprite = 'darth2';
-      leftJumpSprite = 'darth4';
-      playerSpeed = 350;
-      itemHeight = 250;
-      defaultDefeatTime = 4;
-      // if(musica4.isPlaying) {
-        // musica4.stop();
-      // }
-      // if(!musica5.isPlaying) {
-        // musica5.play({
-      //     loop: true
-      //   });
-      // }
+      changeScenary (keys.bGround5, keys.ground5, keys.icon5, keys.rSprite5, keys.rJSprite5, keys.lSprite5, keys.lJSprite5, keys.pSpeed5, keys.iHeight5, keys.mDTime5);
+      if(musica4.isPlaying) {
+        musica4.stop();
+      }
+      if(!musica5.isPlaying) {
+        musica5.play({
+          loop: true
+        });
+      }
     }
     if (score == 25) {
       backgroundRedDead.setVisible(true);
-      flr.setTexture('chao6');
-      items.setTexture('item6');
-      rightJumpSprite = 'red2';
-      leftJumpSprite = 'red4';
-      playerSpeed = 450;
-      itemHeight = 300;
-      defaultDefeatTime = 3;
-      // if(musica5.isPlaying) {
-        // musica5.stop();
-      // }
-      // if(!musica6.isPlaying) {
-        // musica6.play({
-      //     loop: true
-      //   });
-      // }
+      changeScenary (keys.bGround6, keys.ground6, keys.icon6, keys.rSprite6, keys.rJSprite6, keys.lSprite6, keys.lJSprite6, keys.pSpeed6, keys.iHeight6, keys.mDTime6);
+      if(musica5.isPlaying) {
+        musica5.stop();
+      }
+      if(!musica6.isPlaying) {
+        musica6.play({
+          loop: true
+        });
+      }
     }
   }
 }
@@ -324,7 +386,7 @@ function coletaItem (player, item) {
   score += 1;
   scoreText.setText('Score: ' + score);
   somDoItem.play();
-  defeatTime = defaultDefeatTime;
+  defeatTime = maxDefeatTime;
   if (colisao) {
       var x = (jimmyJimmy.x < 300) ? Phaser.Math.Between(300, 600) : Phaser.Math.Between(0, 300);
       items.setX(x);
@@ -333,8 +395,11 @@ function coletaItem (player, item) {
 }
 
 function onTick () {
-  defeatTime--;
+  if (defeatTime > 0) {
+    defeatTime = defeatTime - 0.5;
+  }
   if (defeatTime == 0) {
+    defeatTime = initialDefeatTime;
     fundo.destroy();
     flr.destroy();
     items.destroy();
@@ -342,12 +407,28 @@ function onTick () {
     gameOverScreen.setVisible(true);
     gameOverContinue.setVisible(true);
     gameOverExit.setVisible(true);
+    finalScore.setText('Score: ' + score);
+    finalScore.setVisible(true);
   }
 }
 
+function changeScenary (bGround, ground, icon, rSprite, rJSprite, lSprite, lJSprite, pSpeed, iHeight, mDTime) {
+  fundo.setTexture(bGround);
+  flr.setTexture(ground);
+  items.setTexture(icon);
+  rightSprite = rSprite;
+  rightJumpSprite = rJSprite;
+  leftSprite = lSprite;
+  leftJumpSprite = lJSprite;
+  playerSpeed = pSpeed;
+  itemHeight = iHeight;
+  maxDefeatTime = mDTime;
+}
+
 function reset () {
-  defeatTime = defaultDefeatTime;
+  maxDefeatTime = initialDefeatTime;
   playerSpeed = 150;
   jimmyJimmy.x = 100;
   jimmyJimmy.y = 150;
+  score = 0;
 }
