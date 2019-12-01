@@ -29,6 +29,7 @@ var colisao;
 var itemTocandoChao;
 var somDePulo;
 var somDoItem;
+var move;
 var musica1;
 var musica2;
 var musica3;
