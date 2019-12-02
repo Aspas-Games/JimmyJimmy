@@ -41,9 +41,9 @@ class Menu extends Phaser.Scene {
     });
     jimmyFall.play('jimmyFalling');
 
-    // this.sound.play('trilha', {
-    //   loop: true
-    // })
+    //this.sound.play('trilha', {
+    //  loop: true
+    //})
   }
 
   update() {
