@@ -3,6 +3,15 @@ var jimmyYSpeed = -0.3;
 var jimmyXSpeed = -0.1;
 var playButton;
 var menuMusic;
+var timerControl = 0;
+var segaAspas;
+var timerIntro;
+var timerLoreControl = 0;
+var timerLore;
+var loreImage1;
+var loreImage2;
+var loreImage3;
+var play = 0;
 
 class Menu extends Phaser.Scene {
   constructor() {
@@ -12,9 +21,13 @@ class Menu extends Phaser.Scene {
   preload() {
       //Carrega imagens
       this.load.image('backgroundClouds', 'media/sprites/Menu/000_menu_background.png');
+      this.load.image('aspasIntro', 'media/sprites/intro/001_aspas_logo.jpg');
       this.load.image('jimmyLogo', 'media/sprites/Menu/000_menu_logo.png');
       this.load.image('jogar', 'media/sprites/Menu/000_menu_botao_jogar.png');
       this.load.image('aspas', 'media/sprites/Menu/000_menu_aspas.png');
+      this.load.image('lore1', 'media/sprites/intro/002_lore_1.jpg');
+      this.load.image('lore2', 'media/sprites/intro/003_lore_2.jpg');
+      this.load.image('lore3', 'media/sprites/intro/004_lore_3.jpg');
       this.load.spritesheet('jimmy', 'media/sprites/Menu/000_menu_jimmy.png',{
         frameWidth: 180,
         frameHeight: 233
@@ -72,7 +85,6 @@ class Menu extends Phaser.Scene {
       this.load.image('red2', 'media/sprites/character/006_reddead_direita_pulo.png');
       this.load.image('red3', 'media/sprites/character/006_reddead_esquerda.png');
       this.load.image('red4', 'media/sprites/character/006_reddead_esquerda_pulo.png');
-
       //Carrega Item
       this.load.image('item1', 'media/sprites/item/001_jimmy_item.png');
       this.load.image('item2', 'media/sprites/item/002_jason_item.png');
@@ -95,18 +107,44 @@ class Menu extends Phaser.Scene {
       this.load.image('continue', 'media/sprites/menu/001_gameover_continuar.png');
       this.load.image('exit', 'media/sprites/menu/001_gameover_sair.png');
       this.load.audio('musica7', 'media/audio/musica_gameover.mp3');
+      this.load.audio('btnSound', 'media/audio/som_botao.ogg');
+      //Tela de Carregamento
+      var loadingBar = this.add.graphics({
+        fillStyle: {
+          color: 0x63b4cf //white
+        }
+      });
+
+      this.load.on('progress', (percent)=>{
+        loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 20);
+      });
   }
 
   create() {
+    timerIntro = this.time.addEvent({
+      delay: 500,
+      callback: onTickIntro,
+      callbackScope: this,
+      loop: true
+    });
+    timerLore = this.time.addEvent({
+      delay: 500,
+      callback: onTickLore,
+      callbackScope: this,
+      loop: true
+    });
     this.background = this.add.tileSprite(300, 240, config.width, config.height, 'backgroundClouds');
     this.add.image(170, 110, 'jimmyLogo').setScale(.35);
     this.add.image(300, 460, 'aspas').setScale(0.5);
     playButton = this.add.image(165, 300, 'jogar');
     playButton.setInteractive();
-
+    buttonSound = this.sound.add('btnSound');
     playButton.on('pointerdown', ()=>{
-      this.scene.start('playGame');
-      menuMusic.stop();
+      timerLoreControl = 0;
+      play = 1;
+    })
+    playButton.on('pointerover', ()=>{
+      buttonSound.play();
     })
     jimmyFall = this.add.sprite(450, 240, 'jimmy');
     this.anims.create({
@@ -118,9 +156,13 @@ class Menu extends Phaser.Scene {
     jimmyFall.play('jimmyFalling');
 
     menuMusic = this.sound.add('trilha');
-    menuMusic.play({
-     loop: true
-   });
+    segaAspas = this.add.image(300, 240, 'aspasIntro');
+
+    loreImage1 = this.add.image(300,240, 'lore1').setVisible(false);
+    loreImage2 = this.add.image(300,240, 'lore2').setVisible(false);
+    loreImage3 = this.add.image(300,240, 'lore3').setVisible(false);
+
+    this.cameras.main.fadeIn(500);
   }
 
   update() {
@@ -134,5 +176,49 @@ class Menu extends Phaser.Scene {
     if (jimmyFall.x <= 440 || jimmyFall.x >= 460) {
       jimmyXSpeed *= -1;
     }
+  }
+}
+
+function onTickIntro() {
+  timerControl += 0.5;
+  if (timerControl == 2.5) {
+    this.cameras.main.fadeOut(500);
+    segaAspas.setVisible(false);
+    this.cameras.main.fadeIn(500);
+  }
+  if (timerControl == 2) {
+    menuMusic.play({
+     loop: true
+    });
+  }
+}
+
+function onTickLore() {
+  timerLoreControl += 0.5;
+  if (timerLoreControl == 1 && play == 1) {
+    loreImage1.setVisible(true);
+    this.cameras.main.fadeIn(500);
+  }
+  if (timerLoreControl == 5 && play == 1) {
+    this.cameras.main.fadeOut(500);
+  }
+  if (timerLoreControl == 6 && play == 1) {
+    loreImage2.setVisible(true);
+    this.cameras.main.fadeIn(500);
+  }
+  if (timerLoreControl == 10 && play == 1) {
+    this.cameras.main.fadeOut(500);
+  }
+  if (timerLoreControl == 11 && play == 1) {
+    loreImage2.setVisible(false);
+    loreImage3.setVisible(true);
+    this.cameras.main.fadeIn(500);
+  }
+  if (timerLoreControl == 15 && play == 1) {
+    this.cameras.main.fadeOut(500);
+  }
+  if (timerLoreControl == 16 && play == 1) {
+    this.scene.start('playGame');
+    menuMusic.stop();
   }
 }
