@@ -30,11 +30,7 @@ var itemTocandoChao;
 var somDePulo;
 var somDoItem;
 var move;
-var musica1;
-var musica2;
-var musica3;
-var musica4;
-var musica5;
-var musica6;
+var musicaAtual;
+var musicas;
 
 var game = new Phaser.Game(config);
